@@ -1,6 +1,6 @@
 
 /*
- * *** YOUR NAME GOES HERE / YOUR SECTION NUMBER ***
+ * *** Larry Gao / COMP 400C 002 SP25 ***
  *
  * This java file is a Java object implementing simple AVL Tree.
  * You are to complete the deleteElement method.
@@ -361,6 +361,50 @@ class LUC_AVLTree {
          * code for each. You can also look at the method InsertElement, as it has do
          * do many of the same things as this method.
          */
+
+        if (node == null) {
+            return null;  // value not found, return tree unchanged
+        }
+
+        // perform standard BST delete
+        if (value < node.value) {
+            node.left = deleteElement(value, node.left);
+        } else if (value > node.value) {
+            node.right = deleteElement(value, node.right);
+        } else {
+            // node with one or no child
+            if (node.left == null) {
+                return node.right;
+            } else if (node.right == null) {
+                return node.left;
+            }
+            // node with two children: get in order successor
+            Node successor = minValueNode(node.right);
+            node.value = successor.value;
+            node.right = deleteElement(successor.value, node.right);
+        }
+
+        // update height
+        node.height = getMaxHeight(node);
+
+        // check balance factor
+        int balance = getBalanceFactor(node);
+
+        // rebalance if necessary
+        if (balance > 1) {
+            if (getBalanceFactor(node.left) >= 0) {
+                return LLRotation(node);
+            } else { 
+                return LRRotation(node);
+            }
+        }
+        if (balance < -1) {
+            if (getBalanceFactor(node.right) <= 0) {
+                return RRRotation(node);
+            } else {
+                return RLRotation(node);
+            }
+        }
 
         return node;
     }
