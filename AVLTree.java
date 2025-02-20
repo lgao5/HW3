@@ -368,40 +368,42 @@ class LUC_AVLTree {
 
         // perform standard BST delete
         if (value < node.value) {
-            node.left = deleteElement(value, node.left);
+            node.leftChild = deleteElement(value, node.leftChild);
         } else if (value > node.value) {
-            node.right = deleteElement(value, node.right);
+            node.rightChild = deleteElement(value, node.rightChild);
         } else {
             // node with one or no child
-            if (node.left == null) {
-                return node.right;
-            } else if (node.right == null) {
-                return node.left;
+            if (node.leftChild == null) {
+                return node.rightChild;
+            } else if (node.rightChild == null) {
+                return node.leftChild;
             }
             // node with two children: get in order successor
-            Node successor = minValueNode(node.right);
+            Node successor = minValueNode(node.rightChild);
             node.value = successor.value;
-            node.right = deleteElement(successor.value, node.right);
+            node.rightChild = deleteElement(successor.value, node.rightChild);
         }
 
         // update height
-        node.height = getMaxHeight(node);
+        node.height = getMaxHeight(getHeight(node.leftChild), getHeight(node.rightChild)) + 1;
 
         // check balance factor
         int balance = getBalanceFactor(node);
 
         // rebalance if necessary
-        if (balance > 1) {
-            if (getBalanceFactor(node.left) >= 0) {
+        if (balance > 1) {  // left heavy
+            if (getBalanceFactor(node.leftChild) >= 0) {  // left-left case
                 return LLRotation(node);
-            } else { 
+            } else {  // left-right case
+                node.leftChild = RRRotation(node.leftChild);
                 return LRRotation(node);
             }
-        }
-        if (balance < -1) {
-            if (getBalanceFactor(node.right) <= 0) {
+        } 
+        if (balance < -1) {  // right heavy
+            if (getBalanceFactor(node.rightChild) <= 0) {  // right-right case
                 return RRRotation(node);
-            } else {
+            } else {  // right-left case
+                node.rightChild = LLRotation(node.rightChild);
                 return RLRotation(node);
             }
         }
