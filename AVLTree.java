@@ -407,7 +407,7 @@ class LUC_AVLTree {
         }
 
         return node;
-    }
+    }  // end method deleteElement()
 
 
     /**
